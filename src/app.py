@@ -1,3 +1,10 @@
+#Trabalho: SAT-sudoku-solving
+#Equipe:
+#Alysson Lucas Braga Pinheiro - Mª: 494691
+#Yan Rodrigues da Silva - Mª: 495532
+#Paulo Henrique Diniz de Lima Alencar - M: 494837
+
+
 from pysat.solvers import Glucose4
 
 
