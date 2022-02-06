@@ -8,7 +8,7 @@
 from pysat.solvers import Glucose4
 
 
-def loadingMatrix(lines, board_mapping, board_mapping_inv):
+def loadingMatrix(lines, board_mapping, board_mapping_inv) -> None:
     board = []
     count = 0
     for i in range(len(lines)):
@@ -27,7 +27,7 @@ def loadingMatrix(lines, board_mapping, board_mapping_inv):
             board.clear()
 
 
-def readFile(path_file):
+def readFile(path_file) -> list:
     file = open(path_file, 'r')
     file_list = []
     for line in file:
@@ -36,7 +36,7 @@ def readFile(path_file):
     file.close()
     return file_list
 
-def getBoardMapping():
+def getBoardMapping() -> tuple:
     board_mapping = [[[0 for k in range(9)] for j in range(9)] for i in range(9)]
     board_mapping_inv = []
     count = 1
@@ -50,8 +50,14 @@ def getBoardMapping():
 
     return board_mapping, board_mapping_inv
 
-def addClauses(board, board_mapping):
+def addClauses(board, board_mapping) -> Glucose4:
     solver = Glucose4()
+
+    for i in range(9):
+        for j in range(9):
+            if board[i][j] != -1:
+                solver.add_clause([board_mapping[i][j][board[i][j]]])
+
 
     for i in range(9):
         for j in range(9):
@@ -62,11 +68,6 @@ def addClauses(board, board_mapping):
                     solver.add_clause([-board_mapping[i][j][k], -board_mapping[i][j][x]])
             solver.add_clause(clause)
 
-    for i in range(9):
-        for j in range(9):
-            for k in range(9):
-                for x in range(k + 1, 9):
-                    solver.add_clause([-board_mapping[i][k][j], -board_mapping[i][x][j]])
 
     for i in range(9):
         for j in range(9):
@@ -74,6 +75,14 @@ def addClauses(board, board_mapping):
                 for x in range(k + 1, 9):
                     solver.add_clause([-board_mapping[k][i][j], -board_mapping[x][i][j]])
     
+
+    for i in range(9):
+        for j in range(9):
+            for k in range(9):
+                for x in range(k + 1, 9):
+                    solver.add_clause([-board_mapping[i][k][j], -board_mapping[i][x][j]])
+    
+
     for i in range(0, 7, 3):
         for j in range(0, 7, 3):
             for k in range(i, i + 3):
@@ -84,15 +93,11 @@ def addClauses(board, board_mapping):
                                 if k != n and x != p:
                                     solver.add_clause([-board_mapping[k][x][m], -board_mapping[n][p][m]])
 
-    for i in range(9):
-        for j in range(9):
-            if board[i][j] != -1:
-                solver.add_clause([board_mapping[i][j][board[i][j]]])
 
     return solver
 
 
-def printResolution(resolution, i):
+def printResolution(resolution, i) -> None:
     counter = 0
     print(f'{i} - solução: ')
     for i in range(9):
@@ -105,7 +110,5 @@ def printResolution(resolution, i):
 
 
 boards = readFile("files/tests.txt")
-
-
 board_mapping, board_mapping_inv = getBoardMapping()
 loadingMatrix(boards, board_mapping, board_mapping_inv)
